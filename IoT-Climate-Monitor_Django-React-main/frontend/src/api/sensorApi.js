@@ -1,86 +1,85 @@
-// api/sensorApi.js
-import axios from "axios";
 import { axiosInstance } from "./axiosInstance";
 
+/* =========================
+   AUTH / TOKEN
+========================= */
 
-const API_URL = `${process.env.REACT_APP_API_URL}/api`;
+export function saveToken(token) {
+  localStorage.setItem("token", token);
+}
 
+export function getToken() {
+  return localStorage.getItem("token");
+}
+
+export function removeToken() {
+  localStorage.removeItem("token");
+}
+
+/* =========================
+   MEASUREMENTS
+========================= */
+
+// Tous les measurements
 export async function fetchAllMeasurements() {
-    const res = await axiosInstance.get(`${API_URL}/measurements/`);
-    
-    return res.data; 
+  const res = await axiosInstance.get("measurements/");
+  return res.data;
 }
 
+// Dernière mesure
 export async function fetchLatestMeasurement(sensorId = 1) {
-    const res = await axiosInstance.get(
-        `${API_URL}/measurements/latest/`,
-        {
-            params: { sensor: sensorId }
-        }
-    );
-
-    return res.data;
+  const res = await axiosInstance.get("measurements/latest/", {
+    params: { sensor: sensorId },
+  });
+  return res.data;
 }
 
+// Measurements par capteur
 export async function fetchMeasurements(sensorId = 1) {
   try {
-    const res = await axiosInstance.get(`${API_URL}/measurements/`, {
-      params: {
-        sensor: sensorId, // ici on envoie le query param `sensor=1`
-      },
+    const res = await axiosInstance.get("measurements/", {
+      params: { sensor: sensorId },
     });
     return res.data;
   } catch (error) {
-    console.error("Erreur lors de la récupération des mesures :", error);
+    console.error("Erreur fetchMeasurements:", error);
     return [];
   }
 }
 
-export async function fetchFirstSensor() {
-    const res = await axiosInstance.get(`${API_URL}/sensors/1`);
-    
-    return res.data;
-}
-
+// Créer une mesure
 export async function createMeasurement(data) {
   try {
-    data.sensor_id = 1;
-
-    const res = await axiosInstance.post(`${API_URL}/mesures/`, data);
-
+    const payload = {
+      ...data,
+      sensor: 1,
+    };
+    const res = await axiosInstance.post("measurements/", payload);
     return res.data;
   } catch (error) {
-    console.error("Erreur lors de la création du measurement :", error);
+    console.error("Erreur createMeasurement:", error);
     throw error;
   }
 }
 
+/* =========================
+   SENSORS
+========================= */
+
+// Tous les capteurs
 export async function fetchSensors() {
-    try {
-        const res = await axiosInstance.get(`${API_URL}/sensors/`);
-        return res.data.results;
-    } catch (error) {
-        console.error("Erreur lors de la récupération des capteurs :", error);
-        throw error;
-    }
+  const res = await axiosInstance.get("sensors/");
+  return res.data.results ?? res.data;
 }
 
-export async function fetchSensor(sensor_id) {
-    try {
-        const res = await axiosInstance.get(`${API_URL}/sensors/${sensor_id}/`);
-        return res.data.results;
-    } catch (error) {
-        console.error(`Erreur lors de la récupération du capteur #${sensor_id} :`, error);
-        throw error;
-    }
+// Un capteur
+export async function fetchSensor(sensorId) {
+  const res = await axiosInstance.get(`sensors/${sensorId}/`);
+  return res.data;
 }
 
-export async function updateSensor(sensor_id, data) {
-    try {
-        const res = await axiosInstance.put(`${API_URL}/sensors/${sensor_id}/`, data);
-        return res.data.results;
-    } catch (error) {
-        console.error(`Erreur lors de la mise à jour du capteur #${sensor_id} :`, error);
-        throw error;
-    }
+// Mise à jour capteur
+export async function updateSensor(sensorId, data) {
+  const res = await axiosInstance.put(`sensors/${sensorId}/`, data);
+  return res.data;
 }
