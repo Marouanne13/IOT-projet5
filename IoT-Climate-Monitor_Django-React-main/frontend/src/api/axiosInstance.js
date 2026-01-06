@@ -1,9 +1,7 @@
 import axios from "axios";
-import { getToken } from "./authApi";
+import { getToken } from "./sensorApi"; // ou authApi selon ton nom
 
-const API_URL =
-  process.env.REACT_APP_API_URL ||
-  "https://marouannetika.pythonanywhere.com/api/";
+const API_URL = "https://marouannetika.pythonanywhere.com/api/";
 
 export const axiosInstance = axios.create({
   baseURL: API_URL,
