@@ -1,9 +1,12 @@
 import axios from "axios";
 import { getToken } from "./authApi";
 
-// Axios avec token automatique
+const API_URL =
+  process.env.REACT_APP_API_URL ||
+  "https://marouannetika.pythonanywhere.com/api/";
+
 export const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: API_URL,
 });
 
 axiosInstance.interceptors.request.use((config) => {
